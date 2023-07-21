@@ -24,10 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'alamat',
-        'jabatan',
         'foto',
-        'role',
-        'jenis_kelamin',
     ];
 
     /**
@@ -49,9 +46,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function checkWawancara($email)
-    {
-        return true;
-    }
 
 }

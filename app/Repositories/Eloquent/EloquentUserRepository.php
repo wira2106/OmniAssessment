@@ -44,7 +44,6 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
             $cari = $request->cari;
             $list_user = $list_user->where(function ($query) use ($cari) {
                                 $query->where('users.name', 'LIKE', '%' . $cari . '%')
-                                    ->orWhere('users.jabatan', 'LIKE', '%' . $cari . '%')
                                     ->orWhere('users.alamat', 'LIKE', '%' . $cari . '%');
                             });
         }
@@ -76,11 +75,8 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
         $user = $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'jabatan' => $request->jabatan,
             'alamat' => $request->alamat,
             'foto' => $foto,
-            'role' => $role,
         ]);
         return $user;
     }
