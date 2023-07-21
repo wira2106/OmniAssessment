@@ -1,0 +1,57 @@
+version: '3.9'
+
+networks:
+  OmniAssessment:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_omi_test
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:pro
+      - ./nginx/logs/nginx:/var/logs/nginx:rw
+    volumes_from:
+      - php
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - OmniAssessment
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_omi_test
+    restart: unless-stopped
+    tty: true
+    ports: 
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE : homestead
+      MYSQL_USER : homestead
+      MYSQL_PASSWORD : secret
+      MYSQL_ROOT_PASSWORD : secret
+      SERVICE_TAG: dev
+      SERVICE_NAME: mysql
+    networks:
+      - OmniAssessment
+
+  php:
+    image: php:7.4-fpm-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_omi_test
+    tty: true
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - OmniAssessment
+
+
