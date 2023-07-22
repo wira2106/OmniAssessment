@@ -27,7 +27,7 @@
     <div class="card-body register-card-body">
       <p class="login-box-msg">Register a new membership</p>
 
-      <form action="{{ url('/api/user/create') }}" method="post" id="form_data">
+      <form action="{{ url('/api/user/register') }}" method="post" id="form_data">
 
       <div class="form-group row">
           <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>

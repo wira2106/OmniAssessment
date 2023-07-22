@@ -65,6 +65,7 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
                 'alamat' => $request->alamat,
                 'foto' => $foto,
             ]);
+        $token = $user->createToken('myapptoken')->plainTextToken;
         return $user;
     }
 

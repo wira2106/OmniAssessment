@@ -63,6 +63,8 @@ class UserController extends Controller
 
     public function view(Request $request)
     {
+
+        dd(Auth::user());
         $data_user = $this->UserRepo->listData($request);
 
         $list_user = ListUserTransformers::collection($data_user['data'])
@@ -71,7 +73,6 @@ class UserController extends Controller
                     ]);
         return $list_user;
  
-        // return response()->json($send);
     }
 
 

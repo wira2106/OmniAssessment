@@ -31,38 +31,37 @@ trait AuthenticatesUsers
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function login(Request $request)
-    {
+    // public function login(Request $request)
+    // {
 
-        $this->validateLogin($request);
+    //     $this->validateLogin($request);
 
-        // If the class is using the ThrottlesLogins trait, we can automatically throttle
-        // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
-        if (
-            method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)
-        ) {
-            $this->fireLockoutEvent($request);
+    //     // If the class is using the ThrottlesLogins trait, we can automatically throttle
+    //     // the login attempts for this application. We'll key this by the username and
+    //     // the IP address of the client making these requests into this application.
+    //     if (
+    //         method_exists($this, 'hasTooManyLoginAttempts') &&
+    //         $this->hasTooManyLoginAttempts($request)
+    //     ) {
+    //         $this->fireLockoutEvent($request);
 
-            return $this->sendLockoutResponse($request);
-        }
+    //         return $this->sendLockoutResponse($request);
+    //     }
 
-        //Check Sebelum Login
+    //     //Check Sebelum Login
 
-        $user = new User();
-        $error = ['email' => 'Calon Anggota Belum Melakukan Wawancara'];
-        if ($user->where('email', $request->email)->first() !== null) {
-            if ($this->attemptLogin($request)) {
-                return $this->sendLoginResponse($request);
-            }
+    //     $user = new User();
+    //     if ($user->where('email', $request->email)->first() !== null) {
+    //         if ($this->attemptLogin($request)) {
+    //             return $this->sendLoginResponse($request);
+    //         }
 
-        }
-
+    //     }
 
 
-        return $this->sendFailedLoginResponse($request);
-    }
+
+    //     return $this->sendFailedLoginResponse($request);
+    // }
 
     /**
      * Validate the user login request.
@@ -118,6 +117,8 @@ trait AuthenticatesUsers
         $this->clearLoginAttempts($request);
 
         if ($response = $this->authenticated($request, $this->guard()->user())) {
+            $user = Auth::user();
+        $token = $user->createToken('myapptoken')->plainTextToken;
             return $response;
         }
 
@@ -135,7 +136,7 @@ trait AuthenticatesUsers
      */
     protected function authenticated(Request $request, $user)
     {
-        //
+       //
     }
 
     /**
