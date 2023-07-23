@@ -28,7 +28,7 @@
       <p class="login-box-msg">Register a new membership</p>
 
       <form action="{{ url('/api/user/register') }}" method="post" id="form_data">
-
+      @csrf
       <div class="form-group row">
           <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 

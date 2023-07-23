@@ -25,6 +25,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/user/register',[UserController::class,'store']);
 Route::group(['middleware' => ['auth:sanctum']], function () {   
     /**
+     * Insert multiple Data List User
+     */
+    Route::post('/user/insert',[UserController::class,'storeManyUser']);
+    /**
      * Store Data List User
      */
     Route::post('/user/create',[UserController::class,'store']);
@@ -43,7 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     /**
      * Get Data List User
      */
-    Route::get('/users', [UserController::class, 'view']);
 });
+Route::get('/users', [UserController::class, 'view']);
 
 

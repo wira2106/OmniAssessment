@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendEmailUserEvent;
 use App\Http\Requests\CreatedUserRequest;
 use App\Http\Requests\ProfileRequest;
+use App\Http\Requests\UserRequest;
 use App\Models\Penilaian;
 use App\Models\User;
 use App\Models\Wawancara;
@@ -21,6 +23,8 @@ use Illuminate\Support\Facades\DB;
 use PDF;
 use App\Transformers\ListUserTransformers;
 use App\Transformers\UserTransformers;
+use CreateUsersTable;
+use Faker\Factory as Faker;
 
 class UserController extends Controller
 {
@@ -61,10 +65,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function view(Request $request)
+    public function view(UserRequest $request)
     {
-
-        dd(Auth::user());
         $data_user = $this->UserRepo->listData($request);
 
         $list_user = ListUserTransformers::collection($data_user['data'])
@@ -88,15 +90,60 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreatedUserRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'alamat' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:8',
-            'foto' => 'mimes:jpeg,bmp,png|max:1024',
+
+        DB::beginTransaction();
+        try {
+            $foto = $request->foto? $this->insert_image($request->foto):null;
+            $user = $this->UserRepo->create($request,$foto);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            dd($th);
+        }
+
+        return response()->json([
+            'errors' => false,
+            'message' => "Berhasil",
         ]);
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeManyUser(CreatedUserRequest $request)
+    {
+
+        $newUser = [];
+        $faker = Faker::create('id_ID');
+        for ($i = 0; $i <= 100; $i++) {
+            $firstName = $faker->firstName;
+            $lastName = $faker->lastName;
+            $name = $firstName . " " . $lastName;
+            $email = strtolower($firstName . $lastName) . '@gmail.com';
+            $address = $faker->randomElement([
+                'Jl. Kenangan, Gang Hujan',
+                'Jl. Sudirman, Gang Kenangan',
+                'Jl. Gajah Mada, Gang I',
+                'Jl. Mawar Merah, Gang II',
+                'Jl. Kebo Iwa , Gang II'
+            ]);
+            $newUser [] = [
+                'name' => $name,
+                'email' =>  $email,
+                'foto' =>  null,
+                'password' => '12345678',
+                'password_confirmation' => '12345678',
+                'alamat' => $address
+            ];
+        }
+        $json = json_encode($newUser);
+        return $json;
+        dd(json_encode($newUser),json_decode($json));
+        dd(json_decode($newUser));
         DB::beginTransaction();
         try {
             $foto = $request->foto? $this->insert_image($request->foto):null;
@@ -155,7 +202,6 @@ class UserController extends Controller
             'name' => 'required',
             'alamat' => 'required',
             'email' => 'required|email',
-            'jenis_kelamin' => 'required',
             'foto' => 'mimes:jpeg,bmp,png|max:1024',
         ]);
        

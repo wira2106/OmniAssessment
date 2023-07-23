@@ -60,7 +60,7 @@ $dashboard = true;
                                 <button type="button" id="searchButton" class="btn btn-primary btn-sm" onClick="view()"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
-                    
+                        
 
                     </div>
                     <div class="col-md-3">
@@ -112,7 +112,7 @@ $dashboard = true;
 <!-- ================================== -->
 <!-- Modal Create & Edit Data User      -->
 <!-- ================================== -->
-<div class="modal fade" id="modal_user" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="modal_user" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -237,7 +237,7 @@ $dashboard = true;
             </form>
         </div>
     </div>
-</div>
+</div> -->
 <!-- ================================== -->
 <!-- End Modal Create & Edit Data User  -->
 <!-- ================================== -->

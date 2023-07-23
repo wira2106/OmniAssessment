@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Events\SendEmailUserEvent;
 use App\Repositories\BaseRepository\Eloquent\EloquentBaseRepository;
 use App\Repositories\Interfaces\UserRepository;
 use Illuminate\Http\Request;
@@ -40,6 +41,7 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
     public function listData($request)
     {
         $list_user = $this->model;
+        $token = $this->model->token;
         if($request->cari){
             $cari = $request->cari;
             $list_user = $list_user->where(function ($query) use ($cari) {
@@ -65,7 +67,52 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
                 'alamat' => $request->alamat,
                 'foto' => $foto,
             ]);
+        
+        //make token user
         $token = $user->createToken('myapptoken')->plainTextToken;
+
+        //send email event
+        event(new SendEmailUserEvent($user));
+
+        return $user;
+    }
+
+        
+    /**
+     * insert for many data 
+     *
+     * @param  mixed $data
+     * @return void
+     */
+    public function insert($data)
+    {
+        $insert_data = [];
+        $nama_user = [];
+        foreach ($data as $key => $value) {
+            $insert_data []=[
+                'name' => $value->name,
+                'email' => $value->email,
+                'password' => bcrypt($value->password),
+                'alamat' => $value->alamat,
+                'foto' => $value->foto?$value->foto:null,
+            ];
+            
+        }
+        $user = $this->model->insert($insert_data);
+        
+        foreach ($insert_data as $key => $user_data) {
+            $user_email = $user_data['email'];
+            $nama_user []= $user_data['name'];
+            $user = $this->model->where('email',$user_email)->first();
+
+            //make token user
+            $token = $user->createToken('myapptoken')->plainTextToken;
+    
+            //send email event
+            event(new SendEmailUserEvent($user));
+
+        }
+
         return $user;
     }
 

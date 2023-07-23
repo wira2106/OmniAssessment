@@ -144,6 +144,12 @@
 
 <script src="{{asset('assets/js/plugin/ckeditor/ckeditor.js')}}"></script>
 <script type="text/javascript">
+
+    const headers = {headers :
+                  { Authorization: `Bearer ${token}`,
+                    Accept :'application/json', 
+                  }
+                 };
     $(document).ready(function() {
         $('.select2').select2();
         $("#logout").click(function(){

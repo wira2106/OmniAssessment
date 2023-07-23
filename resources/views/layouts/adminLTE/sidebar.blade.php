@@ -45,6 +45,15 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{url('/user')}}" class="nav-link {{(request()->is('*log*')) ?'active':''}}">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Log HTTP Request
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
           
           <li class="nav-item text-center">
               <form action="{{ route('logout') }}" method="post" style="display:inline-block;">
