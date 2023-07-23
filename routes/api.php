@@ -22,7 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/user/register',[UserController::class,'store']);
+Route::post('/user/register',[UserController::class,'register']);
 Route::group(['middleware' => ['auth:sanctum']], function () {   
     /**
      * Insert multiple Data List User

@@ -11,10 +11,10 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{Auth::user()->foto? url('/image/'.Auth::user()->foto):url('/image/default.jpg')}}" class="img-circle elevation-2" alt="User Image">
+          <img src="{{isset(Auth::user()->foto)? url('/image/'.Auth::user()->foto):url('/image/default.jpg')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{Auth::user()->name}}</a>
+          <a href="#" class="d-block">{{isset(Auth::user()->name)?Auth::user()->name:null}}</a>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="{{url('/user')}}" class="nav-link {{(request()->is('*log*')) ?'active':''}}">
               <i class="nav-icon fas fa-user"></i>
               <p>
@@ -53,7 +53,7 @@
                 <!-- <span class="right badge badge-danger">New</span> -->
               </p>
             </a>
-          </li>
+          </li> -->
           
           <li class="nav-item text-center">
               <form action="{{ route('logout') }}" method="post" style="display:inline-block;">

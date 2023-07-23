@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\SendEmailUserEvent;
 use App\Http\Requests\CreatedUserRequest;
+use App\Http\Requests\DeleteRequest;
 use App\Http\Requests\ProfileRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\Penilaian;
 use App\Models\User;
@@ -25,6 +27,7 @@ use App\Transformers\ListUserTransformers;
 use App\Transformers\UserTransformers;
 use CreateUsersTable;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -97,6 +100,9 @@ class UserController extends Controller
         try {
             $foto = $request->foto? $this->insert_image($request->foto):null;
             $user = $this->UserRepo->create($request,$foto);
+            $creater = $request->user()->name;
+
+            Log::info($creater.": created data ".$user->name." is Successfully");
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -108,6 +114,34 @@ class UserController extends Controller
             'message' => "Berhasil",
         ]);
     }
+        
+    /**
+     * register new data user
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function register(Request $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            $foto = $request->foto? $this->insert_image($request->foto):null;
+            $user = $this->UserRepo->create($request,$foto);
+
+            Log::info("Register data ".$user->name." is Successfully");
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            dd($th);
+        }
+
+        return response()->json([
+            'errors' => false,
+            'message' => "Berhasil",
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -148,6 +182,9 @@ class UserController extends Controller
         try {
             $foto = $request->foto? $this->insert_image($request->foto):null;
             $user = $this->UserRepo->create($request,$foto);
+            $createrMany = $request->user()->name;
+
+            Log::info($createrMany.": created data ".$user->name." is Successfully");
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -196,20 +233,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'alamat' => 'required',
-            'email' => 'required|email',
-            'foto' => 'mimes:jpeg,bmp,png|max:1024',
-        ]);
-       
         
         DB::beginTransaction();
         try {
             $foto = $request->foto? $this->update_image($request->foto,$request->foto_lama):$request->foto_lama;
             $update_user = $this->UserRepo->update_data($id,$request,$foto);
+            $Updater = $request->user()->name;
+
+            Log::info($Updater.": update data ".$request->name." is Successfully");
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -228,9 +261,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(DeleteRequest $request,$id)
     {
+        $deleter = $request->user()->name;
         $user = $this->UserRepo->delete($id);
+
+        Log::info($deleter.": deleted data ".$user->name." is Successfully");
         return response()->json([
             'errors' => false,
             'message' => "Berhasil",
@@ -240,6 +276,7 @@ class UserController extends Controller
     public function list_user()
     {
         $data_user = $this->UserRepo->all();
+        
 
         $list_user = ListUserTransformers::collection($data_user);
         

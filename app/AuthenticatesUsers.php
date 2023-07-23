@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 trait AuthenticatesUsers
 {
@@ -118,7 +119,8 @@ trait AuthenticatesUsers
 
         if ($response = $this->authenticated($request, $this->guard()->user())) {
             $user = Auth::user();
-        $token = $user->createToken('myapptoken')->plainTextToken;
+            $token = $user->createToken('myapptoken')->plainTextToken;
+            Log::info("Login :".$user->name."is Successfully");
             return $response;
         }
 
@@ -172,6 +174,8 @@ trait AuthenticatesUsers
      */
     public function logout(Request $request)
     {
+
+        Log::info("Logout :".$user->name."has been logout");
         $this->guard()->logout();
 
         $request->session()->invalidate();
