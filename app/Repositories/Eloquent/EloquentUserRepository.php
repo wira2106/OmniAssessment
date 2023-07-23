@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Events\CreateTokenUserEvent;
 use App\Events\SendEmailUserEvent;
 use App\Repositories\BaseRepository\Eloquent\EloquentBaseRepository;
 use App\Repositories\Interfaces\UserRepository;
