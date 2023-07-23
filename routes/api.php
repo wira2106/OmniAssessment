@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     /**
      * Get Data List User
      */
+    Route::get('/users', [UserController::class, 'view']);
 });
-Route::get('/users', [UserController::class, 'view']);
 
 
