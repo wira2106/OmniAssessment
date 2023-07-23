@@ -148,43 +148,45 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function storeManyUser(CreatedUserRequest $request)
+    public function storeManyUser(Request $request)
     {
 
         $newUser = [];
-        $faker = Faker::create('id_ID');
-        for ($i = 0; $i <= 100; $i++) {
-            $firstName = $faker->firstName;
-            $lastName = $faker->lastName;
-            $name = $firstName . " " . $lastName;
-            $email = strtolower($firstName . $lastName) . '@gmail.com';
-            $address = $faker->randomElement([
-                'Jl. Kenangan, Gang Hujan',
-                'Jl. Sudirman, Gang Kenangan',
-                'Jl. Gajah Mada, Gang I',
-                'Jl. Mawar Merah, Gang II',
-                'Jl. Kebo Iwa , Gang II'
-            ]);
-            $newUser [] = [
-                'name' => $name,
-                'email' =>  $email,
-                'foto' =>  null,
-                'password' => '12345678',
-                'password_confirmation' => '12345678',
-                'alamat' => $address
-            ];
+        
+        if($request->all()){
+            $newUser = $request->all();
+        }else{
+            $faker = Faker::create('id_ID');
+            for ($i = 1; $i <= 100; $i++) {
+                $firstName = $faker->firstName;
+                $lastName = $faker->lastName;
+                $name = $firstName . " " . $lastName;
+                $email = strtolower($firstName . $lastName) . '@gmail.com';
+                $address = $faker->randomElement([
+                    'Jl. Kenangan, Gang Hujan',
+                    'Jl. Sudirman, Gang Kenangan',
+                    'Jl. Gajah Mada, Gang I',
+                    'Jl. Mawar Merah, Gang II',
+                    'Jl. Kebo Iwa , Gang II'
+                ]);
+                $newUser [] = [
+                    'name' => $name,
+                    'email' =>  $email,
+                    'foto' =>  null,
+                    'password' => '12345678',
+                    'password_confirmation' => '12345678',
+                    'alamat' => $address
+                ];
+            }
         }
-        $json = json_encode($newUser);
-        return $json;
-        dd(json_encode($newUser),json_decode($json));
-        dd(json_decode($newUser));
+        
+        
         DB::beginTransaction();
         try {
-            $foto = $request->foto? $this->insert_image($request->foto):null;
-            $user = $this->UserRepo->create($request,$foto);
-            $createrMany = $request->user()->name;
+            $user = $this->UserRepo->insert($newUser);
+            // $createrMany = $request->user()->name;
 
-            Log::info($createrMany.": created data ".$user->name." is Successfully");
+            // Log::info($createrMany.": created data ".$user->name." is Successfully");
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -192,6 +194,7 @@ class UserController extends Controller
         }
 
         return response()->json([
+            'input data' => $user,
             'errors' => false,
             'message' => "Berhasil",
         ]);

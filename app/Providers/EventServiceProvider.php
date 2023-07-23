@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\CreateTokenUserEvent;
 use App\Events\SendEmailUserEvent;
+use App\Listeners\CreateTokenUserListener;
 use App\Listeners\SendEmailUserListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -19,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         SendEmailUserEvent::class => [
             SendEmailUserListener::class,
+        ],
+        CreateTokenUserEvent::class => [
+            CreateTokenUserListener::class,
         ]
         // Registered::class => [
         //     SendEmailVerificationNotification::class,

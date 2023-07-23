@@ -2,11 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Notifications\UserEmailNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendEmailUserListener implements ShouldQueue
+class CreateTokenUserListener implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -29,7 +28,7 @@ class SendEmailUserListener implements ShouldQueue
         $user = $event->user;
 
         if($user){
-            $user->notify(new UserEmailNotification($user));
+            $user->createToken('myapptoken')->plainTextToken;
         }
     }
 }

@@ -88,16 +88,30 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
     {
         $insert_data = [];
         $nama_user = [];
-        foreach ($data as $key => $value) {
-            $insert_data []=[
-                'name' => $value->name,
-                'email' => $value->email,
-                'password' => bcrypt($value->password),
-                'alamat' => $value->alamat,
-                'foto' => $value->foto?$value->foto:null,
-            ];
-            
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $insert_data []=[
+                    'name' => $value['name'],
+                    'email' => $value['email'],
+                    'password' => bcrypt($value['password']),
+                    'alamat' => $value['alamat'],
+                    'foto' => $value['foto']?$value['foto']:null,
+                ];
+                
+            }
+        } else {
+            foreach ($data as $key => $value) {
+                $insert_data []=[
+                    'name' => $value->name,
+                    'email' => $value->email,
+                    'password' => bcrypt($value->password),
+                    'alamat' => $value->alamat,
+                    'foto' => $value->foto?$value->foto:null,
+                ];
+                
+            }
         }
+        
         $user = $this->model->insert($insert_data);
         
         foreach ($insert_data as $key => $user_data) {
@@ -106,14 +120,14 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
             $user = $this->model->where('email',$user_email)->first();
 
             //make token user
-            $token = $user->createToken('myapptoken')->plainTextToken;
+            event(new CreateTokenUserEvent($user));
     
             //send email event
             event(new SendEmailUserEvent($user));
 
         }
 
-        return $user;
+        return $nama_user;
     }
 
     public function update_data($id,$request,$foto)
