@@ -89,6 +89,7 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
     {
         $insert_data = [];
         $nama_user = [];
+        $user_email = [];
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $insert_data []=[
@@ -116,15 +117,18 @@ class EloquentUserRepository extends EloquentBaseRepository implements UserRepos
         $user = $this->model->insert($insert_data);
         
         foreach ($insert_data as $key => $user_data) {
-            $user_email = $user_data['email'];
+            $user_email []= $user_data['email'];
             $nama_user []= $user_data['name'];
-            $user = $this->model->where('email',$user_email)->first();
+            
+        }
+        $data_user = $this->model->whereIn('email',$user_email)->get();
+        foreach ($data_user as $key => $usr) {
 
             //make token user
-            event(new CreateTokenUserEvent($user));
+            event(new CreateTokenUserEvent($usr));
     
             //send email event
-            event(new SendEmailUserEvent($user));
+            event(new SendEmailUserEvent($usr));
 
         }
 
